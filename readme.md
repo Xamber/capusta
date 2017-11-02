@@ -1,5 +1,7 @@
 # Capusta
 
+Not working now =)
+
 Training with blockchain in go
 
 With this repo I want to improve next skills:

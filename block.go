@@ -3,6 +3,7 @@ package capusta
 import (
 	"crypto/sha256"
 	"bytes"
+	"fmt"
 )
 
 type Block struct {
@@ -19,7 +20,16 @@ func (b *Block) PrepareData(proof int64) []byte {
 	return data
 }
 
-func (b *Block) ValidateHash() bool {
+func (b *Block) Validate() bool {
 	hash := sha256.Sum256(b.PrepareData(b.proof))
 	return bytes.Equal(hash[:], []byte(b.hash[:]))
+}
+
+func (b *Block) Info() string {
+	template := `Block Index: %v Time: %d
+Hash: %x
+PreviousHash: %x
+Validated: %v
+`
+	return fmt.Sprintf(template, b.index, b.timestamp, b.hash, b.previousHash, b.Validate())
 }

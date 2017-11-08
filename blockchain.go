@@ -28,6 +28,14 @@ func (t *Transactions) Serialize() string {
 	return string(seriliazed)
 }
 
+func (chain *blockchain) getLenght() int {
+	return len(chain.blocks)
+}
+
+func (chain *blockchain) getLastBlock() *Block {
+	return &chain.blocks[chain.getLenght()-1]
+}
+
 func (chain *blockchain) MineBlock() {
 
 	var proof int64 = 1
@@ -54,6 +62,7 @@ func (chain *blockchain) MineBlock() {
 	block.proof = proof
 	block.hash = hash
 
+	chain.transactions = Transactions{}
 	chain.blocks = append(chain.blocks, block)
 }
 
@@ -63,21 +72,10 @@ func (chain *blockchain) AddTransaction(sender string, receiver string, amount f
 	return t
 }
 
-func (chain *blockchain) getLastBlock() *Block {
-	lastBlock := chain.blocks[len(chain.blocks)-1]
-	return &lastBlock
-}
-
 func (chain *blockchain) Log() {
 
-	for i := len(chain.blocks); i > 1; i-- {
-		v := chain.blocks[i-1]
-		fmt.Println(v.index, v.timestamp)
-		fmt.Printf("Previous Hash: %x\n", v.previousHash)
-		fmt.Printf("Hash: %x\n", v.hash)
-		fmt.Println(v.data)
-		fmt.Println(v.ValidateHash())
-		fmt.Println()
+	for i := chain.getLenght(); i > 1; i-- {
+		fmt.Println(chain.blocks[i-1].Info())
 	}
 
 }

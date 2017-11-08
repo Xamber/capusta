@@ -4,15 +4,18 @@ import (
 	"encoding/json"
 )
 
-type Transaction struct {
+// transaction impliment simple transaction entity
+type transaction struct {
 	Sender   string  `json:"sender"`
 	Receiver string  `json:"receiver"`
 	Amount   float64 `json:"amount"`
 }
 
-type Transactions []Transaction
+// transactions is a list of transactions
+type transactions []transaction
 
-func (t *Transactions) Serialize() string {
+// serialize create bytes from structure
+func (t *transactions) serialize() string {
 	seriliazed, _ := json.Marshal(t)
 	return string(seriliazed)
 }

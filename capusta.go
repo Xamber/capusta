@@ -4,13 +4,14 @@ import (
 	"time"
 )
 
-var DEFAULT_PROOF = []byte{0, 0}
+var defaultProof = []byte{0, 0}
 
+// Blockchain is the global blockchain variable
 var Blockchain blockchain
 
 func init() {
 
-	genesisBlock := Block{
+	genesisBlock := block{
 		index:        0,
 		timestamp:    time.Now().UnixNano(),
 		data:         "",

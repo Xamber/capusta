@@ -2,9 +2,6 @@ package capusta
 
 import (
 	"time"
-	"crypto/sha256"
-	"bytes"
-	"encoding/binary"
 )
 
 var DEFAULT_PROOF = []byte{0, 0, 0}
@@ -22,14 +19,4 @@ func init() {
 	}
 
 	Blockchain.blocks = append(Blockchain.blocks, genesisBlock)
-}
-
-func Hash(data []byte) [32]byte {
-	return sha256.Sum256(data)
-}
-
-func toBinary(in int64) []byte {
-	buf := new(bytes.Buffer)
-	binary.Write(buf, binary.LittleEndian, in)
-	return buf.Bytes()
 }

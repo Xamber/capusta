@@ -15,25 +15,11 @@ type Block struct {
 }
 
 func (b *Block) PrepareData(proof int64) []byte {
-
-	separator := []byte{}
-
-	data := bytes.Join([][]byte{
-		b.previousHash[:],
-		[]byte(b.data),
-		toBinary(b.timestamp),
-		toBinary(proof),
-	},
-		separator,
-	)
-
+	data := Binarizate(b.previousHash, b.data, b.timestamp, proof)
 	return data
-
 }
 
 func (b *Block) ValidateHash() bool {
-	h := sha256.New()
-	h.Write(b.PrepareData(b.proof))
-	hash := h.Sum(nil)
-	return bytes.Equal(hash, []byte(b.hash[:]))
+	hash := sha256.Sum256(b.PrepareData(b.proof))
+	return bytes.Equal(hash[:], []byte(b.hash[:]))
 }

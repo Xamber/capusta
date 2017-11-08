@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"encoding/json"
 	"bytes"
+	"crypto/sha256"
 )
 
 type blockchain struct {
@@ -47,7 +48,7 @@ func (b *blockchain) MineBlock() {
 
 	for {
 		data := block.PrepareData(proof)
-		hash = Hash(data)
+		hash = sha256.Sum256(data)
 
 		if bytes.Equal(hash[:defaultProofLenght], DEFAULT_PROOF) {
 			break

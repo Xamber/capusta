@@ -28,29 +28,23 @@ func (t *Transactions) Serialize() string {
 	return string(seriliazed)
 }
 
-func (b *blockchain) AddBlock(block Block) {
-	b.blocks = append(b.blocks, block)
-}
-
-func (b *blockchain) MineBlock() {
-
-	block := Block{
-		index:        len(b.blocks),
-		timestamp:    time.Now().UnixNano(),
-		data:         b.transactions.Serialize(),
-		previousHash: b.getLastBlock().hash,
-	}
-
-	defaultProofLenght := len(DEFAULT_PROOF)
+func (chain *blockchain) MineBlock() {
 
 	var proof int64 = 1
 	var hash = [32]byte{}
+
+	var block = Block{
+		index:        len(chain.blocks),
+		timestamp:    time.Now().UnixNano(),
+		data:         chain.transactions.Serialize(),
+		previousHash: chain.getLastBlock().hash,
+	}
 
 	for {
 		data := block.PrepareData(proof)
 		hash = sha256.Sum256(data)
 
-		if bytes.Equal(hash[:defaultProofLenght], DEFAULT_PROOF) {
+		if bytes.Equal(hash[:len(DEFAULT_PROOF)], DEFAULT_PROOF) {
 			break
 		}
 
@@ -60,24 +54,24 @@ func (b *blockchain) MineBlock() {
 	block.proof = proof
 	block.hash = hash
 
-	b.AddBlock(block)
+	chain.blocks = append(chain.blocks, block)
 }
 
-func (b *blockchain) AddTransaction(sender string, receiver string, amount float64) Transaction {
+func (chain *blockchain) AddTransaction(sender string, receiver string, amount float64) Transaction {
 	t := Transaction{sender, receiver, amount}
-	b.transactions = append(b.transactions, t)
+	chain.transactions = append(chain.transactions, t)
 	return t
 }
 
-func (b *blockchain) getLastBlock() *Block {
-	lastBlock := b.blocks[len(b.blocks)-1]
+func (chain *blockchain) getLastBlock() *Block {
+	lastBlock := chain.blocks[len(chain.blocks)-1]
 	return &lastBlock
 }
 
-func (b *blockchain) Log() {
+func (chain *blockchain) Log() {
 
-	for i := len(b.blocks); i > 1; i-- {
-		v := b.blocks[i-1]
+	for i := len(chain.blocks); i > 1; i-- {
+		v := chain.blocks[i-1]
 		fmt.Println(v.index, v.timestamp)
 		fmt.Printf("Previous Hash: %x\n", v.previousHash)
 		fmt.Printf("Hash: %x\n", v.hash)

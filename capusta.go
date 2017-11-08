@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-var DEFAULT_PROOF = []byte{0, 0, 0}
+var DEFAULT_PROOF = []byte{0, 0}
 
 var Blockchain blockchain
 
@@ -16,6 +16,7 @@ func init() {
 		data:         "",
 		proof:        1337,
 		previousHash: [32]byte{},
+		hash:         [32]byte{},
 	}
 
 	Blockchain.blocks = append(Blockchain.blocks, genesisBlock)

@@ -27,41 +27,39 @@ func (t *Transactions) Serialize() string {
 	return string(seriliazed)
 }
 
-func (b *blockchain) AddBlock(proof int) {
-
-	data := b.transactions.Serialize()
-
-	block := Block{
-		index:        len(b.blocks),
-		timestamp:    time.Now().UnixNano(),
-		data:         data,
-		proof:        proof,
-		previousHash: Hash(b.getLastBlock().data),
-	}
-
+func (b *blockchain) AddBlock(block Block) {
 	b.blocks = append(b.blocks, block)
-	b.transactions = Transactions{}
 }
 
 func (b *blockchain) MineBlock() {
 
-	defaultProof := []byte(DEFAULT_PROOF)
-	defaultProofLenght := len(defaultProof)
-	lastProof := b.getLastBlock().proof
-	proof := 1
+	block := Block{
+		index:        len(b.blocks),
+		timestamp:    time.Now().UnixNano(),
+		data:         b.transactions.Serialize(),
+		previousHash: b.getLastBlock().hash,
+	}
+
+	defaultProofLenght := len(DEFAULT_PROOF)
+
+	var proof int64 = 1
+	var hash = [32]byte{}
 
 	for {
-		hashString := fmt.Sprintf("%d%d", lastProof, proof)
-		hash := Hash(hashString)[:defaultProofLenght]
+		data := block.PrepareData(proof)
+		hash = Hash(data)
 
-		if bytes.Equal(hash, defaultProof) {
+		if bytes.Equal(hash[:defaultProofLenght], DEFAULT_PROOF) {
 			break
 		}
 
 		proof += 1
 	}
 
-	b.AddBlock(proof)
+	block.proof = proof
+	block.hash = hash
+
+	b.AddBlock(block)
 }
 
 func (b *blockchain) AddTransaction(sender string, receiver string, amount float64) Transaction {
@@ -79,8 +77,11 @@ func (b *blockchain) Log() {
 
 	for i := len(b.blocks); i > 1; i-- {
 		v := b.blocks[i-1]
-		fmt.Println(v.index, v.timestamp, "previous hash:", v.previousHash, "currient hash:", Hash(v.data))
+		fmt.Println(v.index, v.timestamp)
+		fmt.Printf("Previous Hash: %x\n", v.previousHash)
+		fmt.Printf("Hash: %x\n", v.hash)
 		fmt.Println(v.data)
+		fmt.Println(v.ValidateHash())
 		fmt.Println()
 	}
 

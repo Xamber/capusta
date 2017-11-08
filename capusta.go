@@ -3,9 +3,11 @@ package capusta
 import (
 	"time"
 	"crypto/sha256"
+	"bytes"
+	"encoding/binary"
 )
 
-const DEFAULT_PROOF string = "000"
+var DEFAULT_PROOF = []byte{0, 0, 0}
 
 var Blockchain blockchain
 
@@ -16,16 +18,18 @@ func init() {
 		timestamp:    time.Now().UnixNano(),
 		data:         "",
 		proof:        1337,
-		previousHash: []byte{},
+		previousHash: [32]byte{},
 	}
 
 	Blockchain.blocks = append(Blockchain.blocks, genesisBlock)
 }
 
-func Hash(data string) []byte {
+func Hash(data []byte) [32]byte {
+	return sha256.Sum256(data)
+}
 
-	h := sha256.New()
-	h.Write([]byte(data))
-
-	return h.Sum(nil)
+func toBinary(in int64) []byte {
+	buf := new(bytes.Buffer)
+	binary.Write(buf, binary.LittleEndian, in)
+	return buf.Bytes()
 }

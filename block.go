@@ -26,10 +26,6 @@ func (b *Block) Validate() bool {
 }
 
 func (b *Block) Info() string {
-	template := `Block Index: %v Time: %d
-Hash: %x
-PreviousHash: %x
-Validated: %v
-`
-	return fmt.Sprintf(template, b.index, b.timestamp, b.hash, b.previousHash, b.Validate())
+	template := "Block Index: %v Timestamp: %v Proof: %v \nHash: %x\nPreviousHash: %x\nValidated: %v\n"
+	return fmt.Sprintf(template, b.index, b.timestamp, b.proof, b.hash, b.previousHash, b.Validate())
 }

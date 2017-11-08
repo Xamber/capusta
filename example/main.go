@@ -19,7 +19,7 @@ func main() {
 
 	blockchain.MineBlock()
 
-	blockchain.Log()
+	blockchain.Info()
 
 
 

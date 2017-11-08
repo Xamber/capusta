@@ -4,7 +4,6 @@ import (
 	"time"
 	"sync"
 	"fmt"
-	"encoding/json"
 	"bytes"
 	"crypto/sha256"
 )
@@ -13,19 +12,6 @@ type blockchain struct {
 	blocks       []Block
 	transactions Transactions
 	lock         sync.Mutex
-}
-
-type Transaction struct {
-	Sender   string  `json:"sender"`
-	Receiver string  `json:"receiver"`
-	Amount   float64 `json:"amount"`
-}
-
-type Transactions []Transaction
-
-func (t *Transactions) Serialize() string {
-	seriliazed, _ := json.Marshal(t)
-	return string(seriliazed)
 }
 
 func (chain *blockchain) getLenght() int {
@@ -42,7 +28,7 @@ func (chain *blockchain) MineBlock() {
 	var hash = [32]byte{}
 
 	var block = Block{
-		index:        len(chain.blocks),
+		index:        chain.getLenght(),
 		timestamp:    time.Now().UnixNano(),
 		data:         chain.transactions.Serialize(),
 		previousHash: chain.getLastBlock().hash,
@@ -52,7 +38,7 @@ func (chain *blockchain) MineBlock() {
 		data := block.PrepareData(proof)
 		hash = sha256.Sum256(data)
 
-		if bytes.Equal(hash[:len(DEFAULT_PROOF)], DEFAULT_PROOF) {
+		if bytes.HasPrefix(hash[:], DEFAULT_PROOF) {
 			break
 		}
 
@@ -72,7 +58,9 @@ func (chain *blockchain) AddTransaction(sender string, receiver string, amount f
 	return t
 }
 
-func (chain *blockchain) Log() {
+func (chain *blockchain) Info() {
+
+	fmt.Printf("Blockchain - Length: %v \n", chain.getLenght())
 
 	for i := chain.getLenght(); i > 1; i-- {
 		fmt.Println(chain.blocks[i-1].Info())

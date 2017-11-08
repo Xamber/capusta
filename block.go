@@ -22,7 +22,7 @@ func (b *Block) PrepareData(proof int64) []byte {
 
 func (b *Block) Validate() bool {
 	hash := sha256.Sum256(b.PrepareData(b.proof))
-	return bytes.Equal(hash[:], []byte(b.hash[:]))
+	return bytes.HasPrefix(hash[:], b.hash[:])
 }
 
 func (b *Block) Info() string {

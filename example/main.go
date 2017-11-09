@@ -21,7 +21,4 @@ func main() {
 
 	blockchain.Info()
 
-
-
-
 }

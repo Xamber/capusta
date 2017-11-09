@@ -1,11 +1,11 @@
 package capusta
 
 import (
-	"time"
-	"sync"
-	"fmt"
 	"bytes"
 	"crypto/sha256"
+	"fmt"
+	"sync"
+	"time"
 )
 
 type blockchain struct {

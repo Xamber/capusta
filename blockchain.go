@@ -22,6 +22,20 @@ func (chain *blockchain) getLastBlock() *block {
 	return &chain.blocks[chain.getLenght()-1]
 }
 
+func (chain *blockchain) getBlockbyIndex(index int) *block {
+	return &chain.blocks[index]
+}
+
+func (chain *blockchain) getBlockbyHash(hash [32]byte) *block {
+	for i := chain.getLenght() - 1; i >= 0; i-- {
+		block := chain.getBlockbyIndex(i)
+		if block.hash == hash {
+			return block
+		}
+	}
+	return nil
+}
+
 func (chain *blockchain) MineBlock() {
 
 	var proof int64 = 1

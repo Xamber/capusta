@@ -26,6 +26,13 @@ type transaction struct {
 // transactions is a list of transactions
 type transactions []transaction
 
+func createRewardTransaction(miner string) transaction {
+	in := input{[32]byte{}, -1, "Blockchain"}
+	out := output{REWARD, miner}
+	transaction := transaction{nil, []input{in}, []output{out}}
+	return transaction
+}
+
 // serialize create bytes from structure
 func (t *transactions) serialize() []byte {
 	var result bytes.Buffer

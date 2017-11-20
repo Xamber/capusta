@@ -36,10 +36,12 @@ func (chain *blockchain) getBlockbyHash(hash [32]byte) *block {
 	return nil
 }
 
-func (chain *blockchain) MineBlock() {
+func (chain *blockchain) MineBlock(miner string) {
 
 	var proof int64 = 1
 	var hash = [32]byte{}
+
+	chain.transactions = append(chain.transactions, createRewardTransaction(miner))
 
 	var block = block{
 		index:        chain.getLenght(),

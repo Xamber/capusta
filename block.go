@@ -16,7 +16,7 @@ type block struct {
 	previousHash [32]byte
 }
 
-// block.prepareData create binary slice from block and found proof
+// block.prepareData create binary slice from block and founded proof
 func (b *block) prepareData(proof int64) []byte {
 	return Binarizate(b.previousHash, b.data, b.timestamp, proof)
 }

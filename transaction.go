@@ -5,11 +5,22 @@ import (
 	"encoding/gob"
 )
 
+type input struct {
+	transactionHash [32]byte
+	value           int
+	from            string
+}
+
+type output struct {
+	value int
+	to    string
+}
+
 // transaction impliment simple transaction entity
 type transaction struct {
-	Sender   string
-	Receiver string
-	Amount   float64
+	hash    [32]byte
+	inputs  []input
+	outputs []output
 }
 
 // transactions is a list of transactions
@@ -26,7 +37,7 @@ func (t *transactions) serialize() []byte {
 	return result.Bytes()
 }
 
-//  DeserializeBlock deserializes a block
+// deserialize deserializes a list of transactions
 func (t *transactions) deserialize(binary []byte) {
 	decoder := gob.NewDecoder(bytes.NewReader(binary))
 	err := decoder.Decode(t)

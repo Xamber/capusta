@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"sync"
 	"time"
+	"errors"
 )
 
 type blockchain struct {
@@ -68,10 +69,81 @@ func (chain *blockchain) MineBlock(miner string) {
 	chain.blocks = append(chain.blocks, block)
 }
 
-func (chain *blockchain) AddTransaction(sender string, receiver string, amount float64) transaction {
-	t := transaction{sender, receiver, amount}
-	chain.transactions = append(chain.transactions, t)
-	return t
+func (chain *blockchain) FindAvalibleTransactions(owner string) []transaction {
+	ownerTransactions := map[string]transaction{}
+
+	for index := 1; index < chain.getLenght(); index++ {
+		currentBlock := chain.getBlockbyIndex(index)
+
+		for _, transaction := range currentBlock.getTransactions() {
+
+			for _, out := range transaction.outputs {
+				if out.validateOwner(owner) {
+					ownerTransactions[transaction.id] = transaction
+					break
+				}
+			}
+
+			for _, in := range transaction.inputs {
+				if _, ok := ownerTransactions[in.transactionID]; ok && in.validateOwner(owner) {
+					delete(ownerTransactions, in.transactionID)
+				}
+			}
+		}
+	}
+
+	unspendTransaction := []transaction{}
+	for _, v := range ownerTransactions {
+		unspendTransaction = append(unspendTransaction, v)
+	}
+
+	return unspendTransaction
+}
+
+func (chain *blockchain) TransferMoney(from, to string, amount float64) (string, error) {
+
+	preperadTransactions := map[string]float64{}
+	money := 0.0000
+
+	for _, t := range chain.FindAvalibleTransactions(from) {
+		for _, o := range t.outputs {
+
+			if !o.validateOwner(from) {
+				continue
+			}
+
+			money += o.value
+			preperadTransactions[t.id] = o.value
+		}
+
+		if money >= amount {
+			break
+		}
+	}
+
+	if money < amount {
+		return "", errors.New("User don't have enough money")
+	}
+
+	inputs := []input{}
+	outputs := []output{}
+
+	for id, value := range preperadTransactions {
+		inputs = append(inputs, input{id, value, from})
+	}
+
+	outputs = append(outputs, output{amount, to})
+
+	if money != amount {
+		outputs = append(outputs, output{money - amount, from})
+	}
+
+	transaction := transaction{"", defaultHash, inputs, outputs}
+	transaction.setHandlers()
+	chain.transactions = append(chain.transactions, transaction)
+
+	return transaction.id, nil
+
 }
 
 func (chain *blockchain) Info() {

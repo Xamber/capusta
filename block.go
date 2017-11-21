@@ -21,6 +21,12 @@ func (b *block) prepareData(proof int64) []byte {
 	return Binarizate(b.previousHash, b.data, b.timestamp, proof)
 }
 
+func (b *block) getTransactions() transactions {
+	var transactions transactions
+	transactions.deserialize(b.data)
+	return transactions
+}
+
 // block.validate check hash of block
 func (b *block) validate() bool {
 	hash := sha256.Sum256(b.prepareData(b.proof))

@@ -6,7 +6,7 @@ import (
 
 var defaultProof = []byte{0, 0}
 var defaultHash = [32]byte{}
-const REWARD = 10
+const REWARD = 1000
 
 // Blockchain is the global blockchain variable
 var Blockchain blockchain

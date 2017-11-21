@@ -69,30 +69,30 @@ func (chain *blockchain) MineBlock(miner string) {
 	chain.blocks = append(chain.blocks, block)
 }
 
-func (chain *blockchain) FindAvalibleTransactions(owner string) []transaction {
-	ownerTransactions := map[string]transaction{}
+func (chain *blockchain) FindAvalibleTransactions(owner string) []Transaction {
+	ownerTransactions := map[string]Transaction{}
 
 	for index := 1; index < chain.getLenght(); index++ {
 		currentBlock := chain.getBlockbyIndex(index)
 
 		for _, transaction := range currentBlock.getTransactions() {
 
-			for _, out := range transaction.outputs {
+			for _, out := range transaction.Outputs {
 				if out.validateOwner(owner) {
-					ownerTransactions[transaction.id] = transaction
+					ownerTransactions[transaction.ID] = transaction
 					break
 				}
 			}
 
-			for _, in := range transaction.inputs {
-				if _, ok := ownerTransactions[in.transactionID]; ok && in.validateOwner(owner) {
-					delete(ownerTransactions, in.transactionID)
+			for _, in := range transaction.Inputs {
+				if _, ok := ownerTransactions[in.TransactionID]; ok && in.validateOwner(owner) {
+					delete(ownerTransactions, in.TransactionID)
 				}
 			}
 		}
 	}
 
-	unspendTransaction := []transaction{}
+	unspendTransaction := []Transaction{}
 	for _, v := range ownerTransactions {
 		unspendTransaction = append(unspendTransaction, v)
 	}
@@ -106,14 +106,16 @@ func (chain *blockchain) TransferMoney(from, to string, amount float64) (string,
 	money := 0.0000
 
 	for _, t := range chain.FindAvalibleTransactions(from) {
-		for _, o := range t.outputs {
+
+		for _, o := range t.Outputs {
 
 			if !o.validateOwner(from) {
 				continue
 			}
 
-			money += o.value
-			preperadTransactions[t.id] = o.value
+			money = money + o.Value
+			println(money)
+			preperadTransactions[t.ID] = o.Value
 		}
 
 		if money >= amount {
@@ -125,24 +127,24 @@ func (chain *blockchain) TransferMoney(from, to string, amount float64) (string,
 		return "", errors.New("User don't have enough money")
 	}
 
-	inputs := []input{}
-	outputs := []output{}
+	inputs := []Input{}
+	outputs := []Output{}
 
 	for id, value := range preperadTransactions {
-		inputs = append(inputs, input{id, value, from})
+		inputs = append(inputs, Input{id, value, from})
 	}
 
-	outputs = append(outputs, output{amount, to})
+	outputs = append(outputs, Output{amount, to})
 
 	if money != amount {
-		outputs = append(outputs, output{money - amount, from})
+		outputs = append(outputs, Output{money - amount, from})
 	}
 
-	transaction := transaction{"", defaultHash, inputs, outputs}
+	transaction := Transaction{"", defaultHash, inputs, outputs}
 	transaction.setHandlers()
 	chain.transactions = append(chain.transactions, transaction)
 
-	return transaction.id, nil
+	return transaction.ID, nil
 
 }
 

@@ -16,7 +16,7 @@ type block struct {
 	previousHash [32]byte
 }
 
-// block.prepareData create binary slice from block and founded proof
+// block.prepareData create binary slice From block and founded proof
 func (b *block) prepareData(proof int64) []byte {
 	return Binarizate(b.previousHash, b.data, b.timestamp, proof)
 }
@@ -27,7 +27,7 @@ func (b *block) getTransactions() transactions {
 	return transactions
 }
 
-// block.validate check hash of block
+// block.validate check Hash of block
 func (b *block) validate() bool {
 	hash := sha256.Sum256(b.prepareData(b.proof))
 	return bytes.HasPrefix(hash[:], b.hash[:])

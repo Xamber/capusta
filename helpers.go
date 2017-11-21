@@ -8,7 +8,7 @@ import (
 	"crypto/sha256"
 )
 
-// Binarizate make bytes buffer for all input arguments and return all bytes
+// Binarizate make bytes buffer for all Input arguments and return all bytes
 func Binarizate(input ...interface{}) []byte {
 	buf := new(bytes.Buffer)
 	for _, v := range input {

@@ -6,60 +6,60 @@ import (
 	"encoding/hex"
 )
 
-type input struct {
-	transactionID 	string
-	value           float64
-	from            string
+type Input struct {
+	TransactionID string
+	Value         float64
+	From          string
 }
 
-func (i *input) validateOwner(owner string) bool {
-	return i.from == owner
+func (i *Input) validateOwner(owner string) bool {
+	return i.From == owner
 }
 
-type output struct {
-	value float64
-	to    string
+type Output struct {
+	Value float64
+	To    string
 }
 
-func (o *output) validateOwner(owner string) bool {
-	return o.to == owner
+func (o *Output) validateOwner(owner string) bool {
+	return o.To == owner
 }
 
-// transaction impliment simple transaction entity
-type transaction struct {
-	id      string
-	hash    [32]byte
-	inputs  []input
-	outputs []output
+// Transaction impliment simple Transaction entity
+type Transaction struct {
+	ID      string
+	Hash    [32]byte
+	Inputs  []Input
+	Outputs []Output
 }
 
 // transactions is a list of transactions
-type transactions []transaction
+type transactions []Transaction
 
-func createRewardTransaction(miner string) transaction {
-	in := input{"", -1, "Blockchain"}
-	out := output{REWARD, miner}
-	transaction := transaction{"", defaultHash, []input{in}, []output{out},}
+func createRewardTransaction(miner string) Transaction {
+	in := Input{"", -1, "Blockchain"}
+	out := Output{REWARD, miner}
+	transaction := Transaction{"", defaultHash, []Input{in}, []Output{out},}
 	transaction.setHandlers()
 	return transaction
 }
 
-// Check reward transaction
-func (t *transaction) isReward() bool {
-	if len(t.inputs) != 1 {
+// Check reward Transaction
+func (t *Transaction) isReward() bool {
+	if len(t.Inputs) != 1 {
 		return false
 	}
-	in := t.inputs[0]
-	return in.value == -1 && in.from == "Blockchain"
+	in := t.Inputs[0]
+	return in.Value == -1 && in.From == "Blockchain"
 }
 
-// Set hash to transaction
-func (t *transaction) setHandlers() {
-	t.hash = Hashing(t)
-	t.id = hex.EncodeToString(t.hash[:])
+// Set Hash To Transaction
+func (t *Transaction) setHandlers() {
+	t.Hash = Hashing(t)
+	t.ID = hex.EncodeToString(t.Hash[:])
 }
 
-// serialize create bytes from structure
+// serialize create bytes From structure
 func (ts *transactions) serialize() []byte {
 	var result bytes.Buffer
 	encoder := gob.NewEncoder(&result)

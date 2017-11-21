@@ -9,5 +9,4 @@ With this repo I want to improve next skills:
 - net/http in golang
 - blockchain understanding
 - crypto packages
-- docker with 
-- docker
+- docker container's pool

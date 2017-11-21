@@ -27,26 +27,44 @@ type transaction struct {
 type transactions []transaction
 
 func createRewardTransaction(miner string) transaction {
-	in := input{[32]byte{}, -1, "Blockchain"}
+	in := input{defaultHash, -1, "Blockchain"}
 	out := output{REWARD, miner}
 	transaction := transaction{nil, []input{in}, []output{out}}
+	transaction.setHash()
 	return transaction
 }
 
+// Check reward transaction
+func (t *transaction) isReward() bool {
+
+	if len(t.inputs) != 1 {
+		return false
+	}
+
+	in := t.inputs[0]
+
+	return in.value == -1 && in.from == "Blockchain"
+}
+
+// Set hash to transaction
+func (t *transaction) setHash() {
+	t.hash = Hashing(t)
+}
+
 // serialize create bytes from structure
-func (t *transactions) serialize() []byte {
+func (ts *transactions) serialize() []byte {
 	var result bytes.Buffer
 	encoder := gob.NewEncoder(&result)
 
-	err := encoder.Encode(t)
+	err := encoder.Encode(ts)
 	logError(err)
 
 	return result.Bytes()
 }
 
 // deserialize deserializes a list of transactions
-func (t *transactions) deserialize(binary []byte) {
+func (ts *transactions) deserialize(binary []byte) {
 	decoder := gob.NewDecoder(bytes.NewReader(binary))
-	err := decoder.Decode(t)
+	err := decoder.Decode(ts)
 	logError(err)
 }

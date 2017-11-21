@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"encoding/binary"
 	"log"
+	"encoding/gob"
+	"crypto/sha256"
 )
 
 // Binarizate make bytes buffer for all input arguments and return all bytes
@@ -14,6 +16,19 @@ func Binarizate(input ...interface{}) []byte {
 		logError(err)
 	}
 	return buf.Bytes()
+}
+
+func Hashing(input interface{}) [32]byte {
+	encoded := new(bytes.Buffer)
+
+	enc := gob.NewEncoder(encoded)
+	err := enc.Encode(input)
+
+	logError(err)
+
+	hash := sha256.Sum256(encoded.Bytes())
+
+	return hash
 }
 
 func logError(err error) {

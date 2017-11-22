@@ -1,5 +1,11 @@
 package capusta
 
+import (
+	"bytes"
+	"crypto/sha256"
+	"encoding/binary"
+)
+
 type Input struct {
 	TransactionID string
 	Value         float64
@@ -30,12 +36,32 @@ func (t *Transaction) isReward() bool {
 
 // Set Hash To Transaction
 func (t *Transaction) setHandlers() {
-	t.Hash = Hashing(t)
+	t.Hash = t.makeHash()
 	t.ID = ConvertHashToString(t.Hash)
 }
 
+func (t *Transaction) makeBLOB() []byte {
+	var binaryData bytes.Buffer
+
+	write := func(add interface{}) {
+		err := binary.Write(&binaryData, binary.LittleEndian, add)
+		handleError(err)
+	}
+
+	write(t.Inputs)
+	write(t.Outputs)
+
+	return binaryData.Bytes()
+}
+
+func (t *Transaction) makeHash() [32]byte {
+	return sha256.Sum256(t.makeBLOB())
+}
+
 func createTransaction(inputs []Input, outputs []Output) Transaction {
-	transaction := Transaction{Inputs: inputs, Outputs: outputs}
+	transaction := Transaction{}
+	transaction.Inputs = inputs
+	transaction.Outputs = outputs
 	transaction.setHandlers()
 	return transaction
 }

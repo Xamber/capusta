@@ -29,7 +29,7 @@ func (b *block) validate() bool {
 }
 
 // block.info return string with info about block
-func (b *block) info() string {
-	template := "block Index: %v Timestamp: %v Proof: %v \nHash: %x\nPreviousHash: %x\nValidated: %v\nTransactions: %v\n"
+func (b *block) String() string {
+	template := "block Index: %v Timestamp: %v Proof: %v \nHash: %x\nPreviousHash: %x\nValidated: %v\nTransactions: %v\n\n"
 	return fmt.Sprintf(template, b.index, b.timestamp, b.proof, b.hash, b.previousHash, b.validate(), b.data)
 }

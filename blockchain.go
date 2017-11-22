@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"sync"
 	"time"
-	"errors"
 )
 
 type blockchain struct {
@@ -114,7 +113,6 @@ func (chain *blockchain) TransferMoney(from, to string, amount float64) (string,
 			}
 
 			money = money + o.Value
-			println(money)
 			preperadTransactions[t.ID] = o.Value
 		}
 
@@ -124,7 +122,7 @@ func (chain *blockchain) TransferMoney(from, to string, amount float64) (string,
 	}
 
 	if money < amount {
-		return "", errors.New("User don't have enough money")
+		return "", ErrorNotEnoghtMoney
 	}
 
 	inputs := []Input{}
@@ -148,12 +146,13 @@ func (chain *blockchain) TransferMoney(from, to string, amount float64) (string,
 
 }
 
-func (chain *blockchain) Info() {
+func (chain blockchain) String() string {
 
-	fmt.Printf("Blockchain - Length: %v \n", chain.getLenght())
+	var blocksInfo string = ""
 
 	for i := chain.getLenght(); i > 1; i-- {
-		fmt.Println(chain.blocks[i-1].info())
+		blocksInfo += fmt.Sprint(chain.getBlockbyIndex(i - 1))
 	}
 
+	return fmt.Sprintf("Blockchain - Length: %d \n%s", chain.getLenght(), blocksInfo)
 }

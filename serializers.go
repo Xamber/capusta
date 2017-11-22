@@ -7,7 +7,7 @@ import (
 
 // SerializeTransactions create bytes list of transactions
 func SerializeTransactions(ts []Transaction) []byte {
-	var result bytes.Buffer
+	result :=  bytes.Buffer{}
 	encoder := gob.NewEncoder(&result)
 
 	err := encoder.Encode(ts)
@@ -19,7 +19,7 @@ func SerializeTransactions(ts []Transaction) []byte {
 // DeserializeTransactions deserializes a list of transactions
 func DeserializeTransactions(binary []byte) []Transaction {
 
-	var ts []Transaction
+	ts := []Transaction{}
 
 	decoder := gob.NewDecoder(bytes.NewReader(binary))
 	err := decoder.Decode(ts)

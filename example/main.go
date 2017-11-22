@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/xamber/capusta"
 	"log"
+	"fmt"
 )
 
 var blockchain = capusta.Blockchain
@@ -42,6 +43,6 @@ func main() {
 
 	blockchain.MineBlock("Artem")
 
-	blockchain.Info()
+	fmt.Println(blockchain)
 
 }

@@ -1,8 +1,6 @@
 package capusta
 
 import (
-	"bytes"
-	"crypto/sha256"
 	"fmt"
 	"sync"
 	"time"
@@ -57,10 +55,9 @@ func (chain *blockchain) MineBlock(miner string) {
 	}
 
 	for {
-		data := block.makeBLOB(proof)
-		hash = sha256.Sum256(data)
+		hash = block.makeHash(proof)
 
-		if bytes.HasPrefix(hash[:], defaultProof) {
+		if isProofHash(hash){
 			break
 		}
 
@@ -146,7 +143,7 @@ func (chain *blockchain) TransferMoney(from, to string, amount float64) (string,
 		outputs = append(outputs, Output{money - amount, from})
 	}
 
-	transaction := Transaction{"", defaultHash, inputs, outputs}
+	transaction := Transaction{"", defaultHash32, inputs, outputs}
 	transaction.setHandlers()
 	chain.transactions = append(chain.transactions, transaction)
 

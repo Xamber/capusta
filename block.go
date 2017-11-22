@@ -40,9 +40,13 @@ func (b *block) makeBLOB(proof int64) []byte {
 	return binaryData.Bytes()
 }
 
+func (b *block) makeHash(proof int64) [32]byte {
+	return sha256.Sum256(b.makeBLOB(proof))
+}
+
 // block.validate check Hash of block
 func (b *block) validate() bool {
-	hash := sha256.Sum256(b.makeBLOB(b.proof))
+	hash := b.makeHash(b.proof)
 	return bytes.HasPrefix(hash[:], b.hash[:])
 }
 

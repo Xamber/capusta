@@ -6,7 +6,8 @@ import (
 )
 
 var defaultProof = []byte{0, 0}
-var defaultHash = [32]byte{}
+var defaultHash32 = [32]byte{}
+var defaultHash = defaultHash32[:]
 
 const REWARD = 1000
 

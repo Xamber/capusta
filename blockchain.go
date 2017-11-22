@@ -57,7 +57,7 @@ func (chain *blockchain) MineBlock(miner string) {
 	}
 
 	for {
-		data := block.prepareData(proof)
+		data := block.makeBLOB(proof)
 		hash = sha256.Sum256(data)
 
 		if bytes.HasPrefix(hash[:], defaultProof) {
@@ -81,7 +81,7 @@ func (chain *blockchain) FindAvalibleTransactions(owner string) []Transaction {
 	for index := 1; index < chain.getLenght(); index++ {
 		currentBlock := chain.getBlockbyIndex(index)
 
-		for _, transaction := range currentBlock.data {
+		for _, transaction := range currentBlock.getTransactions() {
 
 			for _, out := range transaction.Outputs {
 				if out.To == owner {

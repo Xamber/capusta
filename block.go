@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"fmt"
+	"encoding/binary"
 )
 
 // block contain information about block
@@ -16,15 +17,32 @@ type block struct {
 	previousHash [32]byte
 }
 
-// block.prepareData create binary slice From block and founded proof
-func (b *block) prepareData(proof int64) []byte {
-	data := SerializeTransactions(b.data)
-	return Binarizate(b.previousHash, b.timestamp, data, proof)
+func (b *block) getTransactions() []Transaction {
+	return b.data
+}
+
+func (b *block) makeBLOB(proof int64) []byte {
+	var binaryData bytes.Buffer
+	var serializedTransaction []byte
+
+	serializedTransaction = SerializeTransactions(b.getTransactions())
+
+	write := func(add interface{}) {
+		err := binary.Write(&binaryData, binary.LittleEndian, add)
+		handleError(err)
+	}
+
+	write(b.previousHash)
+	write(b.timestamp)
+	write(serializedTransaction)
+	write(proof)
+
+	return binaryData.Bytes()
 }
 
 // block.validate check Hash of block
 func (b *block) validate() bool {
-	hash := sha256.Sum256(b.prepareData(b.proof))
+	hash := sha256.Sum256(b.makeBLOB(b.proof))
 	return bytes.HasPrefix(hash[:], b.hash[:])
 }
 

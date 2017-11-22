@@ -14,18 +14,19 @@ func Binarizate(input ...interface{}) []byte {
 	buf := new(bytes.Buffer)
 	for _, v := range input {
 		err := binary.Write(buf, binary.LittleEndian, v)
-		logError(err)
+		handleError(err)
 	}
 	return buf.Bytes()
 }
 
+// Hashing make bytes buffer for Input argument and return sha256 hash
 func Hashing(input interface{}) [32]byte {
 	encoded := new(bytes.Buffer)
 
 	enc := gob.NewEncoder(encoded)
-	err := enc.Encode(input)
 
-	logError(err)
+	err := enc.Encode(input)
+	handleError(err)
 
 	hash := sha256.Sum256(encoded.Bytes())
 
@@ -36,7 +37,7 @@ func ConvertHashToString(input [32]byte) string {
 	return hex.EncodeToString(input[:])
 }
 
-func logError(err error) {
+func handleError(err error) {
 	if err != nil {
 		log.Panic(err)
 	}

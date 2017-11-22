@@ -11,19 +11,18 @@ func SerializeTransactions(ts []Transaction) []byte {
 	encoder := gob.NewEncoder(&result)
 
 	err := encoder.Encode(ts)
-	logError(err)
+	handleError(err)
 
 	return result.Bytes()
 }
 
 // DeserializeTransactions deserializes a list of transactions
 func DeserializeTransactions(binary []byte) []Transaction {
-
 	ts := []Transaction{}
 
 	decoder := gob.NewDecoder(bytes.NewReader(binary))
 	err := decoder.Decode(ts)
-	logError(err)
+	handleError(err)
 
 	return ts
 }

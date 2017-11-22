@@ -14,18 +14,22 @@ type blockchain struct {
 	lock         sync.Mutex
 }
 
+// blockchain.getLenght return lenght of blockchain
 func (chain *blockchain) getLenght() int {
 	return len(chain.blocks)
 }
 
+// blockchain.getLastBlock return pointer to last block of blockchain
 func (chain *blockchain) getLastBlock() *block {
 	return &chain.blocks[chain.getLenght()-1]
 }
 
+// blockchain.getBlockbyIndex return pointer to block by index (int)
 func (chain *blockchain) getBlockbyIndex(index int) *block {
 	return &chain.blocks[index]
 }
 
+// blockchain.getBlockbyHash search and return pointer to block by hash ([32]byte)
 func (chain *blockchain) getBlockbyHash(hash [32]byte) *block {
 	for i := chain.getLenght() - 1; i >= 0; i-- {
 		block := chain.getBlockbyIndex(i)
@@ -36,6 +40,8 @@ func (chain *blockchain) getBlockbyHash(hash [32]byte) *block {
 	return nil
 }
 
+// blockchain.MineBlock mine block
+// Function lock transaction, create reward for miner and starting for searching proof-of-work
 func (chain *blockchain) MineBlock(miner string) {
 
 	var proof int64 = 1
@@ -68,6 +74,7 @@ func (chain *blockchain) MineBlock(miner string) {
 	chain.blocks = append(chain.blocks, block)
 }
 
+// blockchain.FindAvalibleTransactions find avalible transaction for create another one
 func (chain *blockchain) FindAvalibleTransactions(owner string) []Transaction {
 	ownerTransactions := map[string]Transaction{}
 
@@ -99,6 +106,7 @@ func (chain *blockchain) FindAvalibleTransactions(owner string) []Transaction {
 	return unspendTransaction
 }
 
+// blockchain.TransferMoney create transaction in blockcahin
 func (chain *blockchain) TransferMoney(from, to string, amount float64) (string, error) {
 
 	preperadTransactions := map[string]float64{}
@@ -146,6 +154,7 @@ func (chain *blockchain) TransferMoney(from, to string, amount float64) (string,
 
 }
 
+// impliment Stringer interface
 func (chain blockchain) String() string {
 
 	var blocksInfo string = ""

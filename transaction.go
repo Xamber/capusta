@@ -3,7 +3,7 @@ package capusta
 import (
 	"bytes"
 	"crypto/sha256"
-	"encoding/binary"
+	"encoding/gob"
 )
 
 type Input struct {
@@ -43,13 +43,10 @@ func (t *Transaction) setHandlers() {
 func (t *Transaction) makeBLOB() []byte {
 	var binaryData bytes.Buffer
 
-	write := func(add interface{}) {
-		err := binary.Write(&binaryData, binary.LittleEndian, add)
-		handleError(err)
-	}
+	encoder := gob.NewEncoder(&binaryData)
 
-	write(t.Inputs)
-	write(t.Outputs)
+	err := encoder.Encode(*t)
+	handleError(err)
 
 	return binaryData.Bytes()
 }

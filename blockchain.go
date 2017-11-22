@@ -57,7 +57,7 @@ func (chain *blockchain) MineBlock(miner string) {
 	for {
 		hash = block.makeHash(proof)
 
-		if isProofHash(hash){
+		if isProofHash(hash) {
 			break
 		}
 

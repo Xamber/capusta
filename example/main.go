@@ -1,9 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"github.com/xamber/capusta"
 	"log"
-	"fmt"
 )
 
 var blockchain = capusta.Blockchain

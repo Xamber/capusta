@@ -3,8 +3,8 @@ package capusta
 import (
 	"bytes"
 	"crypto/sha256"
-	"fmt"
 	"encoding/binary"
+	"fmt"
 )
 
 // block contain information about block

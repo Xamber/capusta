@@ -7,7 +7,7 @@ import (
 
 // SerializeTransactions create bytes list of transactions
 func SerializeTransactions(ts []Transaction) []byte {
-	result :=  bytes.Buffer{}
+	result := bytes.Buffer{}
 	encoder := gob.NewEncoder(&result)
 
 	err := encoder.Encode(ts)

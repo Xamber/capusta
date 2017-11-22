@@ -1,8 +1,8 @@
 package capusta
 
 import (
-	"time"
 	"errors"
+	"time"
 )
 
 var defaultProof = []byte{0, 0}

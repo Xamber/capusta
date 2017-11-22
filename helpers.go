@@ -2,10 +2,10 @@ package capusta
 
 import (
 	"bytes"
-	"log"
-	"encoding/gob"
 	"crypto/sha256"
+	"encoding/gob"
 	"encoding/hex"
+	"log"
 )
 
 func handleError(err error) {

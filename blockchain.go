@@ -11,7 +11,7 @@ import (
 
 type blockchain struct {
 	blocks       []block
-	transactions transactions
+	transactions []Transaction
 	lock         sync.Mutex
 }
 
@@ -47,7 +47,7 @@ func (chain *blockchain) MineBlock(miner string) {
 	var block = block{
 		index:        chain.getLenght(),
 		timestamp:    time.Now().UnixNano(),
-		data:         chain.transactions.serialize(),
+		data:         chain.transactions,
 		previousHash: chain.getLastBlock().hash,
 	}
 
@@ -65,7 +65,7 @@ func (chain *blockchain) MineBlock(miner string) {
 	block.proof = proof
 	block.hash = hash
 
-	chain.transactions = transactions{}
+	chain.transactions = []Transaction{}
 	chain.blocks = append(chain.blocks, block)
 }
 
@@ -75,17 +75,17 @@ func (chain *blockchain) FindAvalibleTransactions(owner string) []Transaction {
 	for index := 1; index < chain.getLenght(); index++ {
 		currentBlock := chain.getBlockbyIndex(index)
 
-		for _, transaction := range currentBlock.getTransactions() {
+		for _, transaction := range currentBlock.data {
 
 			for _, out := range transaction.Outputs {
-				if out.validateOwner(owner) {
+				if out.To == owner {
 					ownerTransactions[transaction.ID] = transaction
 					break
 				}
 			}
 
 			for _, in := range transaction.Inputs {
-				if _, ok := ownerTransactions[in.TransactionID]; ok && in.validateOwner(owner) {
+				if _, ok := ownerTransactions[in.TransactionID]; ok && in.From == owner {
 					delete(ownerTransactions, in.TransactionID)
 				}
 			}
@@ -109,7 +109,7 @@ func (chain *blockchain) TransferMoney(from, to string, amount float64) (string,
 
 		for _, o := range t.Outputs {
 
-			if !o.validateOwner(from) {
+			if !(o.To == from) {
 				continue
 			}
 

@@ -16,7 +16,7 @@ func init() {
 	genesisBlock := block{
 		index:        0,
 		timestamp:    time.Now().UnixNano(),
-		data:         []byte{},
+		data:         []Transaction{},
 		proof:        1337,
 		previousHash: [32]byte{},
 		hash:         [32]byte{},

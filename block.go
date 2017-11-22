@@ -10,7 +10,7 @@ import (
 type block struct {
 	index        int
 	timestamp    int64
-	data         []byte
+	data         []Transaction
 	proof        int64
 	hash         [32]byte
 	previousHash [32]byte
@@ -18,13 +18,8 @@ type block struct {
 
 // block.prepareData create binary slice From block and founded proof
 func (b *block) prepareData(proof int64) []byte {
-	return Binarizate(b.previousHash, b.data, b.timestamp, proof)
-}
-
-func (b *block) getTransactions() transactions {
-	var transactions transactions
-	transactions.deserialize(b.data)
-	return transactions
+	data := SerializeTransactions(b.data)
+	return Binarizate(b.previousHash, b.timestamp, data, proof)
 }
 
 // block.validate check Hash of block
@@ -36,7 +31,5 @@ func (b *block) validate() bool {
 // block.info return string with info about block
 func (b *block) info() string {
 	template := "block Index: %v Timestamp: %v Proof: %v \nHash: %x\nPreviousHash: %x\nValidated: %v\nTransactions: %v\n"
-	transactions := transactions{}
-	transactions.deserialize(b.data)
-	return fmt.Sprintf(template, b.index, b.timestamp, b.proof, b.hash, b.previousHash, b.validate(), transactions)
+	return fmt.Sprintf(template, b.index, b.timestamp, b.proof, b.hash, b.previousHash, b.validate(), b.data)
 }

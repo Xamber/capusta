@@ -6,6 +6,7 @@ import (
 	"log"
 	"encoding/gob"
 	"crypto/sha256"
+	"encoding/hex"
 )
 
 // Binarizate make bytes buffer for all Input arguments and return all bytes
@@ -29,6 +30,10 @@ func Hashing(input interface{}) [32]byte {
 	hash := sha256.Sum256(encoded.Bytes())
 
 	return hash
+}
+
+func ConvertHashToString(input [32]byte) string {
+	return hex.EncodeToString(input[:])
 }
 
 func logError(err error) {

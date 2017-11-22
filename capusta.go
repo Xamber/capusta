@@ -17,7 +17,7 @@ var Blockchain blockchain
 
 func init() {
 
-	genesisBlock := block{
+	genesisBlock := Block{
 		index:        0,
 		timestamp:    time.Now().UnixNano(),
 		data:         []Transaction{},

@@ -7,7 +7,7 @@ import (
 )
 
 type blockchain struct {
-	blocks       []block
+	blocks       []Block
 	transactions []Transaction
 	lock         sync.Mutex
 }
@@ -17,18 +17,18 @@ func (chain *blockchain) getLenght() int {
 	return len(chain.blocks)
 }
 
-// blockchain.getLastBlock return pointer to last block of blockchain
-func (chain *blockchain) getLastBlock() *block {
+// blockchain.getLastBlock return pointer to last Block of blockchain
+func (chain *blockchain) getLastBlock() *Block {
 	return &chain.blocks[chain.getLenght()-1]
 }
 
-// blockchain.getBlockbyIndex return pointer to block by index (int)
-func (chain *blockchain) getBlockbyIndex(index int) *block {
+// blockchain.getBlockbyIndex return pointer to Block by index (int)
+func (chain *blockchain) getBlockbyIndex(index int) *Block {
 	return &chain.blocks[index]
 }
 
-// blockchain.getBlockbyHash search and return pointer to block by hash ([32]byte)
-func (chain *blockchain) getBlockbyHash(hash [32]byte) *block {
+// blockchain.getBlockbyHash search and return pointer to Block by hash ([32]byte)
+func (chain *blockchain) getBlockbyHash(hash [32]byte) *Block {
 	for i := chain.getLenght() - 1; i >= 0; i-- {
 		block := chain.getBlockbyIndex(i)
 		if block.hash == hash {
@@ -38,7 +38,7 @@ func (chain *blockchain) getBlockbyHash(hash [32]byte) *block {
 	return nil
 }
 
-// blockchain.MineBlock mine block
+// blockchain.MineBlock mine Block
 // Function lock transaction, create reward for miner and starting for searching proof-of-work
 func (chain *blockchain) MineBlock(miner string) {
 
@@ -47,7 +47,7 @@ func (chain *blockchain) MineBlock(miner string) {
 
 	chain.transactions = append(chain.transactions, createRewardTransaction(miner))
 
-	var block = block{
+	var block = Block{
 		index:        chain.getLenght(),
 		timestamp:    time.Now().UnixNano(),
 		data:         chain.transactions,
@@ -78,7 +78,7 @@ func (chain *blockchain) FindAvalibleTransactions(owner string) []Transaction {
 	for index := 1; index < chain.getLenght(); index++ {
 		currentBlock := chain.getBlockbyIndex(index)
 
-		for _, transaction := range currentBlock.getTransactions() {
+		for _, transaction := range currentBlock.GetTransactions() {
 
 			for _, out := range transaction.Outputs {
 				if out.To == owner {

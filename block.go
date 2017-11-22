@@ -7,8 +7,8 @@ import (
 	"fmt"
 )
 
-// block contain information about block
-type block struct {
+// Block contain information about Block
+type Block struct {
 	index        int
 	timestamp    int64
 	data         []Transaction
@@ -17,15 +17,15 @@ type block struct {
 	previousHash [32]byte
 }
 
-func (b *block) getTransactions() []Transaction {
+func (b *Block) GetTransactions() []Transaction {
 	return b.data
 }
 
-func (b *block) makeBLOB(proof int64) []byte {
+func (b *Block) makeBLOB(proof int64) []byte {
 	var binaryData bytes.Buffer
 	var serializedTransaction []byte
 
-	serializedTransaction = SerializeTransactions(b.getTransactions())
+	serializedTransaction = SerializeTransactions(b.GetTransactions())
 
 	write := func(add interface{}) {
 		err := binary.Write(&binaryData, binary.LittleEndian, add)
@@ -40,18 +40,18 @@ func (b *block) makeBLOB(proof int64) []byte {
 	return binaryData.Bytes()
 }
 
-func (b *block) makeHash(proof int64) [32]byte {
+func (b *Block) makeHash(proof int64) [32]byte {
 	return sha256.Sum256(b.makeBLOB(proof))
 }
 
-// block.validate check Hash of block
-func (b *block) validate() bool {
+// Block.validate check Hash of Block
+func (b *Block) validate() bool {
 	hash := b.makeHash(b.proof)
 	return bytes.HasPrefix(hash[:], b.hash[:])
 }
 
-// block.info return string with info about block
-func (b *block) String() string {
+// Block.info return string with info about Block
+func (b *Block) String() string {
 	template := "Block %v \nTimestamp: %v Proof: %v \nHash: %x\nPreviousHash: %x\nValidated: %v\nTransactions: %v\n\n"
 	return fmt.Sprintf(template, b.index, b.timestamp, b.proof, b.hash, b.previousHash, b.validate(), b.data)
 }

@@ -38,6 +38,21 @@ func (chain *blockchain) getBlockbyHash(hash [32]byte) *Block {
 	return nil
 }
 
+func (chain *blockchain) Iterator() chan *Block {
+	output := make(chan *Block)
+
+	go func() {
+
+		for _, v := range chain.blocks {
+			output <- &v
+		}
+
+		close(output)
+	}()
+
+	return output
+}
+
 // blockchain.MineBlock mine Block
 // Function lock transaction, create reward for miner and starting for searching proof-of-work
 func (chain *blockchain) MineBlock(miner string) {

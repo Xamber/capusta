@@ -48,9 +48,9 @@ func main() {
 
 	time.Sleep(time.Second*5)
 
-	for iter := capusta.NewItrator(&blockchain); iter.HasNext(); iter.Next() {
-		block := iter.GetBlock()
-		println(block.String())
+
+	for b := range blockchain.Iterator() {
+		println(b.String())
 	}
 
 }

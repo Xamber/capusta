@@ -93,7 +93,7 @@ func (chain *blockchain) FindAvalibleTransactions(owner string) []Transaction {
 
 			for _, out := range transaction.Outputs {
 				if out.To == owner {
-					ownerTransactions[transaction.ID] = transaction
+					ownerTransactions[transaction.getID()] = transaction
 					break
 				}
 			}
@@ -127,7 +127,7 @@ func (chain *blockchain) TransferMoney(from, to string, amount float64) (string,
 			}
 
 			money = money + o.Value
-			preperadTransactions[t.ID] = o.Value
+			preperadTransactions[t.getID()] = o.Value
 		}
 
 		if money >= amount {
@@ -152,11 +152,11 @@ func (chain *blockchain) TransferMoney(from, to string, amount float64) (string,
 		outputs = append(outputs, Output{money - amount, from})
 	}
 
-	transaction := Transaction{"", defaultHash32, inputs, outputs}
+	transaction := Transaction{defaultHash32, inputs, outputs}
 	transaction.setHandlers()
 	chain.transactions = append(chain.transactions, transaction)
 
-	return transaction.ID, nil
+	return transaction.getID(), nil
 
 }
 

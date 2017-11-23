@@ -19,7 +19,6 @@ type Output struct {
 
 // Transaction impliment simple Transaction entity
 type Transaction struct {
-	ID      string
 	Hash    [32]byte
 	Inputs  []Input
 	Outputs []Output
@@ -37,7 +36,11 @@ func (t *Transaction) isReward() bool {
 // Set Hash To Transaction
 func (t *Transaction) setHandlers() {
 	t.Hash = t.makeHash()
-	t.ID = ConvertHashToString(t.Hash)
+}
+
+// Get string ID of transaction cash
+func (t *Transaction) getID() string {
+	return ConvertHashToString(t.Hash)
 }
 
 func (t *Transaction) makeBLOB() []byte {

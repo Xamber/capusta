@@ -121,9 +121,7 @@ func (chain *blockchain) TransferMoney(from, to string, amount float64) (string,
 	money := 0.0000
 
 	for _, t := range chain.FindAvalibleTransactions(from) {
-
 		for _, o := range t.Outputs {
-
 			if !(o.To == from) {
 				continue
 			}

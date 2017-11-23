@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sync"
 	"time"
+	"bytes"
 )
 
 type blockchain struct {
@@ -68,7 +69,7 @@ func (chain *blockchain) MineBlock(miner string) {
 	for {
 		hash = block.Hash(proof)
 
-		if isProofHash(hash) {
+		if bytes.HasPrefix(hash[:], defaultProof) {
 			break
 		}
 

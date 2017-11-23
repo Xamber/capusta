@@ -23,9 +23,6 @@ func (b *Block) GetTransactions() []Transaction {
 
 func (b *Block) toBinary(proof int64) []byte {
 	var binaryData bytes.Buffer
-	var serializedTransaction []byte
-
-	serializedTransaction = SerializeTransactions(b.GetTransactions())
 
 	write := func(add interface{}) {
 		err := binary.Write(&binaryData, binary.LittleEndian, add)
@@ -34,7 +31,7 @@ func (b *Block) toBinary(proof int64) []byte {
 
 	write(b.previousHash)
 	write(b.timestamp)
-	write(serializedTransaction)
+	write(b.transactionToBinary())
 	write(proof)
 
 	return binaryData.Bytes()

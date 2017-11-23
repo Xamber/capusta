@@ -3,6 +3,7 @@ package capusta
 import (
 	"errors"
 	"time"
+	"log"
 )
 
 var defaultProof = []byte{0, 0}
@@ -27,4 +28,10 @@ func init() {
 	}
 
 	Blockchain.blocks = append(Blockchain.blocks, genesisBlock)
+}
+
+func handleError(err error)  {
+	if err != nil {
+		log.Panic(err)
+	}
 }

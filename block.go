@@ -21,7 +21,7 @@ func (b *Block) GetTransactions() []Transaction {
 	return b.data
 }
 
-func (b *Block) makeBLOB(proof int64) []byte {
+func (b *Block) toBinary(proof int64) []byte {
 	var binaryData bytes.Buffer
 	var serializedTransaction []byte
 
@@ -40,13 +40,27 @@ func (b *Block) makeBLOB(proof int64) []byte {
 	return binaryData.Bytes()
 }
 
-func (b *Block) makeHash(proof int64) [32]byte {
-	return sha256.Sum256(b.makeBLOB(proof))
+func (b *Block) Hash(proof int64) [32]byte {
+	return sha256.Sum256(b.toBinary(proof))
+}
+
+func (b *Block) transactionToBinary() []byte {
+	blob := [][]byte{}
+
+	for _, t := range b.data {
+		blob = append(blob, t.makeBLOB())
+	}
+
+	return bytes.Join(blob, []byte{})
+}
+
+func (b *Block) hashTransactions() [32]byte {
+	return sha256.Sum256(b.transactionToBinary())
 }
 
 // Block.validate check Hash of Block
 func (b *Block) validate() bool {
-	hash := b.makeHash(b.proof)
+	hash := b.Hash(b.proof)
 	return bytes.HasPrefix(hash[:], b.hash[:])
 }
 

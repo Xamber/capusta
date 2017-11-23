@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"encoding/gob"
+	"encoding/hex"
 )
 
 type Input struct {
@@ -40,7 +41,7 @@ func (t *Transaction) setHandlers() {
 
 // Get string ID of transaction cash
 func (t *Transaction) getID() string {
-	return ConvertHashToString(t.Hash)
+	return hex.EncodeToString(t.Hash[:])
 }
 
 func (t *Transaction) makeBLOB() []byte {

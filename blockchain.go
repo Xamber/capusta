@@ -66,7 +66,7 @@ func (chain *blockchain) MineBlock(miner string) {
 	}
 
 	for {
-		hash = block.makeHash(proof)
+		hash = block.Hash(proof)
 
 		if isProofHash(hash) {
 			break
@@ -165,8 +165,8 @@ func (chain blockchain) String() string {
 
 	var blocksInfo string = ""
 
-	for i := chain.getLenght(); i > 1; i-- {
-		blocksInfo += fmt.Sprint(chain.getBlockbyIndex(i - 1))
+	for b := range chain.Iterator() {
+		blocksInfo += b.String()
 	}
 
 	return fmt.Sprintf("Blockchain - Length: %d \n%s", chain.getLenght(), blocksInfo)

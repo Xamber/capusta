@@ -46,7 +46,7 @@ func main() {
 
 	fmt.Println(blockchain)
 
-	time.Sleep(time.Second*5)
+	time.Sleep(time.Second*1)
 
 
 	for b := range blockchain.Iterator() {

@@ -40,16 +40,12 @@ func (chain *blockchain) getBlockbyHash(hash [32]byte) *Block {
 
 func (chain *blockchain) Iterator() chan *Block {
 	output := make(chan *Block)
-
 	go func() {
-
 		for _, v := range chain.blocks {
 			output <- &v
 		}
-
 		close(output)
 	}()
-
 	return output
 }
 

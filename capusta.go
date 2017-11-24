@@ -9,8 +9,7 @@ import (
 var Blockchain blockchain
 
 var defaultProof = []byte{0, 0}
-var defaultHash32 = [32]byte{}
-var defaultHash = defaultHash32[:]
+var zeroHash32 = [32]byte{}
 
 const REWARD = 1000
 

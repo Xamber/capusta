@@ -2,7 +2,6 @@ package capusta
 
 import (
 	"bytes"
-	"crypto/sha256"
 	"fmt"
 )
 
@@ -40,10 +39,6 @@ func (b *Block) transactionToBinary() []byte {
 	}
 
 	return bytes.Join(blob, []byte{})
-}
-
-func (b *Block) hashTransactions() [32]byte {
-	return sha256.Sum256(b.transactionToBinary())
 }
 
 // Block.validate check Hash of Block

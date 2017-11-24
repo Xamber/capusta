@@ -13,9 +13,17 @@ type TInput struct {
 	From            string
 }
 
+func (ti TInput) Unlock(owner string) bool {
+	return ti.From == owner
+}
+
 type TOutput struct {
 	Value float64
 	To    string
+}
+
+func (to TOutput) Unlock(owner string) bool {
+	return to.To == owner
 }
 
 // Transaction impliment simple Transaction entity

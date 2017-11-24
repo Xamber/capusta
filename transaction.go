@@ -17,9 +17,17 @@ func (ti TInput) Unlock(owner string) bool {
 	return ti.From == owner
 }
 
+func (ti TInput) DataToBinary() []any {
+	return []any{ti.TransactionHash, ti.Value, []byte(ti.From)}
+}
+
 type TOutput struct {
 	Value float64
 	To    string
+}
+
+func (to TOutput) DataToBinary() []any {
+	return []any{to.Value, []byte(to.To)}
 }
 
 func (to TOutput) Unlock(owner string) bool {
@@ -47,6 +55,20 @@ func (t *Transaction) getID() string {
 	return hex.EncodeToString(t.Hash[:])
 }
 
+func (t *Transaction) DataToBinary() []any {
+	data := []any{}
+
+	for _, i := range t.Inputs {
+		data = append(data, Binarizate(i))
+	}
+
+	for _, o := range t.Outputs {
+		data = append(data, Binarizate(o))
+	}
+
+	return data
+}
+
 func (t *Transaction) makeBLOB() []byte {
 	var binaryData bytes.Buffer
 
@@ -66,7 +88,7 @@ func NewTransaction(inputs []TInput, outputs []TOutput) Transaction {
 	transaction := Transaction{}
 	transaction.Inputs = inputs
 	transaction.Outputs = outputs
-	transaction.Hash = transaction.makeHash()
+	transaction.Hash = Hash(&transaction)
 	return transaction
 }
 

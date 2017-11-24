@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/xamber/capusta"
 	"log"
-	"time"
 )
 
 var blockchain = capusta.Blockchain
@@ -45,12 +44,4 @@ func main() {
 	blockchain.MineBlock("Artem")
 
 	fmt.Println(blockchain)
-
-	time.Sleep(time.Second*1)
-
-
-	for b := range blockchain.Iterator() {
-		println(b.String())
-	}
-
 }

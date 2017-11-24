@@ -6,15 +6,18 @@ import (
 	"log"
 )
 
+var Blockchain blockchain
+
 var defaultProof = []byte{0, 0}
 var defaultHash32 = [32]byte{}
 var defaultHash = defaultHash32[:]
 
 const REWARD = 1000
 
+type any interface{}
+
 var ErrorNotEnoghtMoney = errors.New("User don't have enough money")
 
-var Blockchain blockchain
 
 func init() {
 

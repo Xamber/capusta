@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"sync"
 	"time"
-	"bytes"
 )
 
 type blockchain struct {
@@ -30,33 +29,36 @@ func (chain *blockchain) getBlockbyIndex(index int) *Block {
 
 // blockchain.getBlockbyHash search and return pointer to Block by hash ([32]byte)
 func (chain *blockchain) getBlockbyHash(hash [32]byte) *Block {
-	for i := chain.getLenght() - 1; i >= 0; i-- {
-		block := chain.getBlockbyIndex(i)
-		if block.hash == hash {
+	for block := range chain.Iterator() {
+		if block.hash == hash{
 			return block
 		}
 	}
+
 	return nil
 }
 
 func (chain *blockchain) Iterator() chan *Block {
 	output := make(chan *Block)
-	go func() {
+
+	push := func(block Block) {
+		output <- &block
+	}
+
+	pusher := func() {
 		for _, v := range chain.blocks {
-			output <- &v
+			push(v)
 		}
 		close(output)
-	}()
+	}
+
+	go pusher()
 	return output
 }
 
 // blockchain.MineBlock mine Block
 // Function lock transaction, create reward for miner and starting for searching proof-of-work
 func (chain *blockchain) MineBlock(miner string) {
-
-	var proof int64 = 1
-	var hash = [32]byte{}
-
 	chain.transactions = append(chain.transactions, createRewardTransaction(miner))
 
 	var block = Block{
@@ -64,20 +66,18 @@ func (chain *blockchain) MineBlock(miner string) {
 		timestamp:    time.Now().UnixNano(),
 		data:         chain.transactions,
 		previousHash: chain.getLastBlock().hash,
+		proof:        1,
 	}
 
 	for {
-		hash = block.Hash(proof)
+		block.proof++
+		block.hash = Hash(&block)
 
-		if bytes.HasPrefix(hash[:], defaultProof) {
+		if block.checkSum() {
 			break
 		}
 
-		proof++
 	}
-
-	block.proof = proof
-	block.hash = hash
 
 	chain.transactions = []Transaction{}
 	chain.blocks = append(chain.blocks, block)

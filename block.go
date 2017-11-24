@@ -3,7 +3,6 @@ package capusta
 import (
 	"bytes"
 	"crypto/sha256"
-	"encoding/binary"
 	"fmt"
 )
 
@@ -21,24 +20,16 @@ func (b *Block) GetTransactions() []Transaction {
 	return b.data
 }
 
-func (b *Block) toBinary(proof int64) []byte {
-	var binaryData bytes.Buffer
+func (b *Block) DataToBinary() []any {
 
-	write := func(add interface{}) {
-		err := binary.Write(&binaryData, binary.LittleEndian, add)
-		handleError(err)
+	data := []any{
+		b.previousHash,
+		b.timestamp,
+		b.transactionToBinary(),
+		b.proof,
 	}
 
-	write(b.previousHash)
-	write(b.timestamp)
-	write(b.transactionToBinary())
-	write(proof)
-
-	return binaryData.Bytes()
-}
-
-func (b *Block) Hash(proof int64) [32]byte {
-	return sha256.Sum256(b.toBinary(proof))
+	return data
 }
 
 func (b *Block) transactionToBinary() []byte {
@@ -57,12 +48,16 @@ func (b *Block) hashTransactions() [32]byte {
 
 // Block.validate check Hash of Block
 func (b *Block) validate() bool {
-	hash := b.Hash(b.proof)
-	return bytes.HasPrefix(hash[:], b.hash[:])
+	hash := Hash(b)
+	return bytes.Equal(hash[:], b.hash[:])
+}
+
+func (b *Block) checkSum() bool {
+	return bytes.HasPrefix(b.hash[:], defaultProof)
 }
 
 // Block.info return string with info about Block
 func (b *Block) String() string {
 	template := "Block %v \nTimestamp: %v Proof: %v \nHash: %x\nPreviousHash: %x\nValidated: %v\nTransactions: %v\n\n"
-	return fmt.Sprintf(template, b.index, b.timestamp, b.proof, b.hash, b.previousHash, b.validate(), b.data)
+	return fmt.Sprintf(template, b.index, b.timestamp, b.proof, b.hash, b.previousHash, b.checkSum(), b.data)
 }

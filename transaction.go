@@ -43,11 +43,7 @@ type Transaction struct {
 
 // Check reward Transaction
 func (t *Transaction) isReward() bool {
-	if len(t.Inputs) != 1 {
-		return false
-	}
-	in := t.Inputs[0]
-	return in.Value == -1 && in.From == "Blockchain"
+	return len(t.Inputs) != 1 && t.Inputs[0].Value == -1 && t.Inputs[0].From == "Blockchain"
 }
 
 // Get string ID of transaction cash

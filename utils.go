@@ -2,8 +2,8 @@ package capusta
 
 import (
 	"bytes"
-	"encoding/binary"
 	"crypto/sha256"
+	"encoding/binary"
 )
 
 type Hashible interface {

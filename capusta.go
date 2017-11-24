@@ -2,8 +2,8 @@ package capusta
 
 import (
 	"errors"
-	"time"
 	"log"
+	"time"
 )
 
 var Blockchain blockchain
@@ -17,7 +17,6 @@ const REWARD = 1000
 type any interface{}
 
 var ErrorNotEnoghtMoney = errors.New("User don't have enough money")
-
 
 func init() {
 
@@ -33,7 +32,7 @@ func init() {
 	Blockchain.blocks = append(Blockchain.blocks, genesisBlock)
 }
 
-func handleError(err error)  {
+func handleError(err error) {
 	if err != nil {
 		log.Panic(err)
 	}

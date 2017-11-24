@@ -30,7 +30,7 @@ func (chain *blockchain) getBlockbyIndex(index int) *Block {
 // blockchain.getBlockbyHash search and return pointer to Block by hash ([32]byte)
 func (chain *blockchain) getBlockbyHash(hash [32]byte) *Block {
 	for block := range chain.Iterator() {
-		if block.hash == hash{
+		if block.hash == hash {
 			return block
 		}
 	}
@@ -59,7 +59,7 @@ func (chain *blockchain) Iterator() chan *Block {
 // blockchain.MineBlock mine Block
 // Function lock transaction, create reward for miner and starting for searching proof-of-work
 func (chain *blockchain) MineBlock(miner string) {
-	chain.transactions = append(chain.transactions, createRewardTransaction(miner))
+	chain.transactions = append(chain.transactions, NewReward(miner))
 
 	var block = Block{
 		index:        chain.getLenght(),
@@ -76,7 +76,6 @@ func (chain *blockchain) MineBlock(miner string) {
 		if block.checkSum() {
 			break
 		}
-
 	}
 
 	chain.transactions = []Transaction{}
@@ -85,7 +84,7 @@ func (chain *blockchain) MineBlock(miner string) {
 
 // blockchain.FindAvalibleTransactions find avalible transaction for create another one
 func (chain *blockchain) FindAvalibleTransactions(owner string) []Transaction {
-	ownerTransactions := map[string]Transaction{}
+	ownerTransactions := map[[32]byte]Transaction{}
 
 	for index := 1; index < chain.getLenght(); index++ {
 		currentBlock := chain.getBlockbyIndex(index)
@@ -94,14 +93,14 @@ func (chain *blockchain) FindAvalibleTransactions(owner string) []Transaction {
 
 			for _, out := range transaction.Outputs {
 				if out.To == owner {
-					ownerTransactions[transaction.getID()] = transaction
+					ownerTransactions[transaction.Hash] = transaction
 					break
 				}
 			}
 
 			for _, in := range transaction.Inputs {
-				if _, ok := ownerTransactions[in.TransactionID]; ok && in.From == owner {
-					delete(ownerTransactions, in.TransactionID)
+				if _, ok := ownerTransactions[in.TransactionHash]; ok && in.From == owner {
+					delete(ownerTransactions, in.TransactionHash)
 				}
 			}
 		}
@@ -118,7 +117,7 @@ func (chain *blockchain) FindAvalibleTransactions(owner string) []Transaction {
 // blockchain.TransferMoney create transaction in blockcahin
 func (chain *blockchain) TransferMoney(from, to string, amount float64) (string, error) {
 
-	preperadTransactions := map[string]float64{}
+	preperadTransactions := map[[32]byte]float64{}
 	money := 0.0000
 
 	for _, t := range chain.FindAvalibleTransactions(from) {
@@ -128,7 +127,7 @@ func (chain *blockchain) TransferMoney(from, to string, amount float64) (string,
 			}
 
 			money = money + o.Value
-			preperadTransactions[t.getID()] = o.Value
+			preperadTransactions[t.Hash] = o.Value
 		}
 
 		if money >= amount {
@@ -140,21 +139,19 @@ func (chain *blockchain) TransferMoney(from, to string, amount float64) (string,
 		return "", ErrorNotEnoghtMoney
 	}
 
-	inputs := []Input{}
-	outputs := []Output{}
+	inputs := []TInput{}
+	outputs := []TOutput{}
 
 	for id, value := range preperadTransactions {
-		inputs = append(inputs, Input{id, value, from})
+		inputs = append(inputs, TInput{id, value, from})
 	}
 
-	outputs = append(outputs, Output{amount, to})
+	outputs = append(outputs, TOutput{amount, to})
 
 	if money != amount {
-		outputs = append(outputs, Output{money - amount, from})
+		outputs = append(outputs, TOutput{money - amount, from})
 	}
-
-	transaction := Transaction{defaultHash32, inputs, outputs}
-	transaction.setHandlers()
+	transaction := NewTransaction(inputs, outputs)
 	chain.transactions = append(chain.transactions, transaction)
 
 	return transaction.getID(), nil

@@ -7,13 +7,13 @@ import (
 	"encoding/hex"
 )
 
-type Input struct {
-	TransactionID string
-	Value         float64
-	From          string
+type TInput struct {
+	TransactionHash [32]byte
+	Value           float64
+	From            string
 }
 
-type Output struct {
+type TOutput struct {
 	Value float64
 	To    string
 }
@@ -21,8 +21,8 @@ type Output struct {
 // Transaction impliment simple Transaction entity
 type Transaction struct {
 	Hash    [32]byte
-	Inputs  []Input
-	Outputs []Output
+	Inputs  []TInput
+	Outputs []TOutput
 }
 
 // Check reward Transaction
@@ -32,11 +32,6 @@ func (t *Transaction) isReward() bool {
 	}
 	in := t.Inputs[0]
 	return in.Value == -1 && in.From == "Blockchain"
-}
-
-// Set Hash To Transaction
-func (t *Transaction) setHandlers() {
-	t.Hash = t.makeHash()
 }
 
 // Get string ID of transaction cash
@@ -59,16 +54,22 @@ func (t *Transaction) makeHash() [32]byte {
 	return sha256.Sum256(t.makeBLOB())
 }
 
-func createTransaction(inputs []Input, outputs []Output) Transaction {
+func NewTransaction(inputs []TInput, outputs []TOutput) Transaction {
 	transaction := Transaction{}
 	transaction.Inputs = inputs
 	transaction.Outputs = outputs
-	transaction.setHandlers()
+	transaction.Hash = transaction.makeHash()
 	return transaction
 }
 
-func createRewardTransaction(miner string) Transaction {
-	in := Input{"", -1, "Blockchain"}
-	out := Output{REWARD, miner}
-	return createTransaction([]Input{in}, []Output{out})
+func NewReward(miner string) Transaction {
+	in := TInput{
+		Value: -1,
+		From:  "Blockchain",
+	}
+	out := TOutput{
+		Value: REWARD,
+		To:    miner,
+	}
+	return NewTransaction([]TInput{in}, []TOutput{out})
 }

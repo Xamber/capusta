@@ -31,6 +31,16 @@ func (b *Block) checkSum() bool {
 
 // Block.info return string with info about Block
 func (b *Block) String() string {
+
+	transactions := ""
+	for _, t := range b.data {
+		transactions += t.String()
+	}
+
+	if transactions == "" {
+		transactions = "<Empty transactions>"
+	}
+
 	template := "Block %v \nTimestamp: %v Proof: %v \nHash: %x\nPreviousHash: %x\nValidated: %v\nTransactions: %v\n\n"
-	return fmt.Sprintf(template, b.index, b.timestamp, b.proof, b.hash, b.previousHash, b.validate(), b.data)
+	return fmt.Sprintf(template, b.index, b.timestamp, b.proof, b.hash, b.previousHash, b.validate(), transactions)
 }

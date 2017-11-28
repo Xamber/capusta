@@ -2,6 +2,7 @@ package capusta
 
 import (
 	"encoding/hex"
+	"fmt"
 )
 
 type TInput struct {
@@ -48,4 +49,18 @@ func NewReward(miner string) Transaction {
 		to:    miner,
 	}
 	return NewTransaction([]TInput{in}, []TOutput{out})
+}
+
+func (t *Transaction) String() string {
+	var ret string = fmt.Sprintf("\n    %s\n", t.getID())
+
+	for _, ti := range t.inputs {
+		ret += fmt.Sprintf("    IN %s - %f\n", ti.from, ti.value)
+	}
+
+	for _, to := range t.outputs {
+		ret += fmt.Sprintf("    OUT %s - %f\n", to.to, to.value)
+	}
+
+	return ret
 }

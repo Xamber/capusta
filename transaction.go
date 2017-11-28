@@ -41,9 +41,7 @@ func (t *Transaction) getID() string {
 }
 
 func NewTransaction(inputs []TInput, outputs []TOutput) Transaction {
-	transaction := Transaction{}
-	transaction.inputs = inputs
-	transaction.outputs = outputs
+	transaction := Transaction{inputs: inputs, outputs: outputs}
 	transaction.hash = Hash(&transaction)
 	return transaction
 }

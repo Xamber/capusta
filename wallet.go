@@ -38,7 +38,7 @@ func (w *Wallet) TransferMoney(to *Wallet, amount float64) (string, error) {
 
 	for id, money := range w.transactions {
 		inputs = append(inputs, TInput{id, money, w.owner})
-		transfered -= money
+		transfered += money
 	}
 
 	if transfered < amount {
@@ -58,21 +58,25 @@ func (w *Wallet) TransferMoney(to *Wallet, amount float64) (string, error) {
 	return transaction.getID(), nil
 }
 
-func (w *Wallet) CheckTransactionOwner(t Transaction) (owner bool, haveOutput float64, haveInput bool) {
+func (w *Wallet) CheckTransactionOwner(t Transaction) (bool, float64, bool) {
+	var owner bool = false
+	var haveOutput float64 = 0
+	var haveInput bool = false
+
 	for _, out := range t.outputs {
-		if !out.Unlock(w.owner) {
+		if out.Unlock(w.owner) == true {
 			owner = true
 			haveOutput += out.value
 		}
 	}
 
 	for _, in := range t.inputs {
-		if in.Unlock(w.owner) {
+		if in.Unlock(w.owner) == true {
 			owner = true
 			haveInput = true
 		}
 	}
-	return
+	return owner, haveOutput, haveInput
 }
 
 func (w *Wallet) RefreshTransactions() {
@@ -88,7 +92,6 @@ func (w *Wallet) RefreshTransactions() {
 
 func (w *Wallet) handleTransaction(t Transaction) {
 	owner, money, used := w.CheckTransactionOwner(t)
-
 	if owner == false {
 		return
 	}

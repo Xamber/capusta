@@ -12,8 +12,6 @@ var defaultProof = []byte{0, 0}
 
 const REWARD = 1000
 
-type any interface{}
-
 var ErrorNotEnoghtMoney = errors.New("User don't have enough money")
 
 func init() {
@@ -24,9 +22,9 @@ func init() {
 		data:         []Transaction{},
 		proof:        1337,
 		previousHash: [32]byte{},
-		hash:         [32]byte{},
 	}
 
+	genesisBlock.hash = Hash(&genesisBlock)
 	Blockchain.blocks = append(Blockchain.blocks, genesisBlock)
 }
 

@@ -32,5 +32,5 @@ func (b *Block) checkSum() bool {
 // Block.info return string with info about Block
 func (b *Block) String() string {
 	template := "Block %v \nTimestamp: %v Proof: %v \nHash: %x\nPreviousHash: %x\nValidated: %v\nTransactions: %v\n\n"
-	return fmt.Sprintf(template, b.index, b.timestamp, b.proof, b.hash, b.previousHash, b.checkSum(), b.data)
+	return fmt.Sprintf(template, b.index, b.timestamp, b.proof, b.hash, b.previousHash, b.validate(), b.data)
 }

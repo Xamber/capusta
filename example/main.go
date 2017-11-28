@@ -10,36 +10,39 @@ var blockchain = capusta.Blockchain
 
 func main() {
 
-	blockchain.MineBlock("Artem")
-
-	_, err := blockchain.TransferMoney("Artem", "Dima", 100)
-	if err != nil {
-		log.Fatal(err)
+	printTransaction := func(id string, err error) {
+		if err != nil {
+			log.Fatal(err)
+		} else {
+			fmt.Println(id)
+		}
 	}
+
+	artem := blockchain.GetWallet("Artem")
+	dima := blockchain.GetWallet("Dima")
+
+	blockchain.MineBlock("Artem")
+	fmt.Println(artem.GetBalance())
+
+	id, err := artem.TransferMoney(dima,100)
+	printTransaction(id, err)
 
 	blockchain.MineBlock("Dima")
 
-	_, err = blockchain.TransferMoney("Dima", "Artem", 50)
-	if err != nil {
-		log.Fatal(err)
-	}
+	id, err = dima.TransferMoney(artem, 50)
+	printTransaction(id, err)
 
 	blockchain.MineBlock("Artem")
 
-	_, err = blockchain.TransferMoney("Artem", "Dima", 80)
-	if err != nil {
-		log.Fatal(err)
-	}
+	id, err = artem.TransferMoney(dima,80)
+	printTransaction(id, err)
 
 	blockchain.MineBlock("Dima")
-	_, err = blockchain.TransferMoney("Dima", "Artem", 77)
-	if err != nil {
-		log.Fatal(err)
-	}
-	_, err = blockchain.TransferMoney("Artem", "Dima", 10)
-	if err != nil {
-		log.Fatal(err)
-	}
+
+	id, err = dima.TransferMoney(artem, 77)
+	printTransaction(id, err)
+	id, err = artem.TransferMoney(dima,10)
+	printTransaction(id, err)
 
 	blockchain.MineBlock("Artem")
 

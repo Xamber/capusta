@@ -38,6 +38,10 @@ func (chain *blockchain) getBlockbyHash(hash [32]byte) *Block {
 	return nil
 }
 
+func (chain *blockchain) GetWallet(owner string) *Wallet {
+	return &Wallet{owner: owner, blockchain: chain}
+}
+
 func (chain *blockchain) Iterator() chan *Block {
 	output := make(chan *Block)
 
@@ -80,49 +84,6 @@ func (chain *blockchain) MineBlock(miner string) {
 
 	chain.transactions = []Transaction{}
 	chain.blocks = append(chain.blocks, block)
-}
-
-// blockchain.TransferMoney create transaction in blockcahin
-func (chain *blockchain) TransferMoney(from, to string, amount float64) ([32]byte, error) {
-
-	preperadTransactions := map[[32]byte]float64{}
-	money := 0.0000
-
-	for _, t := range chain.FindAvalibleTransactions(from) {
-		for _, o := range t.outputs {
-			if !(o.to == from) {
-				continue
-			}
-
-			money = money + o.value
-			preperadTransactions[t.hash] = o.value
-		}
-
-		if money >= amount {
-			break
-		}
-	}
-
-	if money < amount {
-		return [32]byte{}, ErrorNotEnoghtMoney
-	}
-
-	inputs := []TInput{}
-	outputs := []TOutput{}
-
-	for id, value := range preperadTransactions {
-		inputs = append(inputs, TInput{id, value, from})
-	}
-
-	outputs = append(outputs, TOutput{amount, to})
-
-	if money != amount {
-		outputs = append(outputs, TOutput{money - amount, from})
-	}
-	transaction := NewTransaction(inputs, outputs)
-	chain.transactions = append(chain.transactions, transaction)
-
-	return transaction.hash, nil
 }
 
 // impliment Stringer interface

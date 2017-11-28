@@ -1,6 +1,8 @@
 package capusta
 
-import "sync"
+import (
+	"sync"
+)
 
 type Wallet struct {
 	owner        string

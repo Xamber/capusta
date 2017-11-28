@@ -5,57 +5,57 @@ import (
 )
 
 type TInput struct {
-	TransactionHash [32]byte
-	Value           float64
-	From            string
+	transactionHash [32]byte
+	value           float64
+	from            string
 }
 
 func (ti TInput) Unlock(owner string) bool {
-	return ti.From == owner
+	return ti.from == owner
 }
 
 type TOutput struct {
-	Value float64
-	To    string
+	value float64
+	to    string
 }
 
 func (to TOutput) Unlock(owner string) bool {
-	return to.To == owner
+	return to.to == owner
 }
 
 // Transaction impliment simple Transaction entity
 type Transaction struct {
-	Hash    [32]byte
-	Inputs  []TInput
-	Outputs []TOutput
+	hash    [32]byte
+	inputs  []TInput
+	outputs []TOutput
 }
 
 // Check reward Transaction
 func (t *Transaction) isReward() bool {
-	return len(t.Inputs) != 1 && t.Inputs[0].Value == -1 && t.Inputs[0].From == "Blockchain"
+	return len(t.inputs) != 1 && t.inputs[0].value == -1 && t.inputs[0].from == "Blockchain"
 }
 
 // Get string ID of transaction cash
 func (t *Transaction) getID() string {
-	return hex.EncodeToString(t.Hash[:])
+	return hex.EncodeToString(t.hash[:])
 }
 
 func NewTransaction(inputs []TInput, outputs []TOutput) Transaction {
 	transaction := Transaction{}
-	transaction.Inputs = inputs
-	transaction.Outputs = outputs
-	transaction.Hash = Hash(&transaction)
+	transaction.inputs = inputs
+	transaction.outputs = outputs
+	transaction.hash = Hash(&transaction)
 	return transaction
 }
 
 func NewReward(miner string) Transaction {
 	in := TInput{
-		Value: -1,
-		From:  "Blockchain",
+		value: -1,
+		from:  "Blockchain",
 	}
 	out := TOutput{
-		Value: REWARD,
-		To:    miner,
+		value: REWARD,
+		to:    miner,
 	}
 	return NewTransaction([]TInput{in}, []TOutput{out})
 }

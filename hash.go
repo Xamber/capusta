@@ -68,15 +68,15 @@ func (b *Block) Binary() []byte {
 func (t *Transaction) Binary() []byte {
 	var data blob
 
-	for _, ti := range t.Inputs {
-		data.WriteHash(ti.TransactionHash)
-		data.WriteFloat64(ti.Value)
-		data.WriteString(ti.From)
+	for _, ti := range t.inputs {
+		data.WriteHash(ti.transactionHash)
+		data.WriteFloat64(ti.value)
+		data.WriteString(ti.from)
 	}
 
-	for _, to := range t.Outputs {
-		data.WriteFloat64(to.Value)
-		data.WriteString(to.To)
+	for _, to := range t.outputs {
+		data.WriteFloat64(to.value)
+		data.WriteString(to.to)
 	}
 
 	return data.Bytes()

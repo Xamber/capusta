@@ -19,7 +19,7 @@ func (b *Block) GetTransactions() []Transaction {
 	return b.data
 }
 
-// Block.validate check Hash of Block
+// Block.validate check hash of Block
 func (b *Block) validate() bool {
 	hash := Hash(b)
 	return bytes.Equal(hash[:], b.hash[:])

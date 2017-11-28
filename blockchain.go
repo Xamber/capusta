@@ -90,16 +90,16 @@ func (chain *blockchain) FindAvalibleTransactions(owner string) []Transaction {
 
 		for _, transaction := range currentBlock.GetTransactions() {
 
-			for _, out := range transaction.Outputs {
+			for _, out := range transaction.outputs {
 				if out.Unlock(owner) {
-					ownerTransactions[transaction.Hash] = transaction
+					ownerTransactions[transaction.hash] = transaction
 					break
 				}
 			}
 
-			for _, in := range transaction.Inputs {
-				if _, ok := ownerTransactions[in.TransactionHash]; ok && in.Unlock(owner) {
-					delete(ownerTransactions, in.TransactionHash)
+			for _, in := range transaction.inputs {
+				if _, ok := ownerTransactions[in.transactionHash]; ok && in.Unlock(owner) {
+					delete(ownerTransactions, in.transactionHash)
 				}
 			}
 		}
@@ -120,13 +120,13 @@ func (chain *blockchain) TransferMoney(from, to string, amount float64) ([32]byt
 	money := 0.0000
 
 	for _, t := range chain.FindAvalibleTransactions(from) {
-		for _, o := range t.Outputs {
-			if !(o.To == from) {
+		for _, o := range t.outputs {
+			if !(o.to == from) {
 				continue
 			}
 
-			money = money + o.Value
-			preperadTransactions[t.Hash] = o.Value
+			money = money + o.value
+			preperadTransactions[t.hash] = o.value
 		}
 
 		if money >= amount {
@@ -153,7 +153,7 @@ func (chain *blockchain) TransferMoney(from, to string, amount float64) ([32]byt
 	transaction := NewTransaction(inputs, outputs)
 	chain.transactions = append(chain.transactions, transaction)
 
-	return transaction.Hash, nil
+	return transaction.hash, nil
 
 }
 

@@ -64,14 +64,14 @@ func (w *Wallet) CheckTransactionOwner(t Transaction) (bool, float64, bool) {
 	var haveInput bool = false
 
 	for _, out := range t.outputs {
-		if out.Unlock(w.owner) == true {
+		if out.to == w.owner {
 			owner = true
 			haveOutput += out.value
 		}
 	}
 
 	for _, in := range t.inputs {
-		if in.Unlock(w.owner) == true {
+		if in.from == w.owner {
 			owner = true
 			haveInput = true
 		}

@@ -10,17 +10,9 @@ type TInput struct {
 	from            string
 }
 
-func (ti TInput) Unlock(owner string) bool {
-	return ti.from == owner
-}
-
 type TOutput struct {
 	value float64
 	to    string
-}
-
-func (to TOutput) Unlock(owner string) bool {
-	return to.to == owner
 }
 
 // Transaction impliment simple Transaction entity

@@ -2,6 +2,7 @@ package capusta
 
 import (
 	"encoding/hex"
+	"sync"
 )
 
 type TInput struct {

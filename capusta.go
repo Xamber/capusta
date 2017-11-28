@@ -13,6 +13,7 @@ var defaultProof = []byte{0, 0}
 const REWARD = 1000
 
 var ErrorNotEnoghtMoney = errors.New("User don't have enough money")
+var ErrorWalletDontHaveBlockchain = errors.New("Wallet don't have connection with Blockchain")
 
 func init() {
 

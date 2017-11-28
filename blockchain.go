@@ -82,37 +82,6 @@ func (chain *blockchain) MineBlock(miner string) {
 	chain.blocks = append(chain.blocks, block)
 }
 
-// blockchain.FindAvalibleTransactions find avalible transaction for create another one
-func (chain *blockchain) FindAvalibleTransactions(owner string) []Transaction {
-	ownerTransactions := map[[32]byte]Transaction{}
-
-	for currentBlock := range chain.Iterator() {
-
-		for _, transaction := range currentBlock.GetTransactions() {
-
-			for _, out := range transaction.outputs {
-				if out.Unlock(owner) {
-					ownerTransactions[transaction.hash] = transaction
-					break
-				}
-			}
-
-			for _, in := range transaction.inputs {
-				if _, ok := ownerTransactions[in.transactionHash]; ok && in.Unlock(owner) {
-					delete(ownerTransactions, in.transactionHash)
-				}
-			}
-		}
-	}
-
-	unspendTransaction := []Transaction{}
-	for _, v := range ownerTransactions {
-		unspendTransaction = append(unspendTransaction, v)
-	}
-
-	return unspendTransaction
-}
-
 // blockchain.TransferMoney create transaction in blockcahin
 func (chain *blockchain) TransferMoney(from, to string, amount float64) ([32]byte, error) {
 
@@ -154,7 +123,6 @@ func (chain *blockchain) TransferMoney(from, to string, amount float64) ([32]byt
 	chain.transactions = append(chain.transactions, transaction)
 
 	return transaction.hash, nil
-
 }
 
 // impliment Stringer interface

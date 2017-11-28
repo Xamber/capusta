@@ -11,9 +11,17 @@ type Wallet struct {
 	lock         sync.Mutex
 }
 
+func (w *Wallet) UnlockInput(ti TInput) bool {
+	return ti.from == w.owner
+}
+
+func (w *Wallet) UnlockOutput(to TOutput) bool {
+	return to.to == w.owner
+}
+
 func (w *Wallet) GetBalance() float64 {
 	allMoney := 0.0
-	w.RefreshTransactions()
+	w.RefreshTransactions() // this need to refactor
 
 	w.lock.Lock()
 	defer w.lock.Unlock()
@@ -26,7 +34,7 @@ func (w *Wallet) GetBalance() float64 {
 
 func (w *Wallet) TransferMoney(to *Wallet, amount float64) (string, error) {
 
-	w.RefreshTransactions()
+	w.RefreshTransactions() // this need to refactor
 
 	w.lock.Lock()
 	defer w.lock.Unlock()
@@ -64,14 +72,14 @@ func (w *Wallet) CheckTransactionOwner(t Transaction) (bool, float64, bool) {
 	var haveInput bool = false
 
 	for _, out := range t.outputs {
-		if out.to == w.owner {
+		if w.UnlockOutput(out) {
 			owner = true
 			money += out.value
 		}
 	}
 
 	for _, in := range t.inputs {
-		if in.from == w.owner {
+		if w.UnlockInput(in) {
 			owner = true
 			haveInput = true
 		}
@@ -82,10 +90,11 @@ func (w *Wallet) CheckTransactionOwner(t Transaction) (bool, float64, bool) {
 func (w *Wallet) RefreshTransactions() {
 	w.lock.Lock()
 	defer w.lock.Unlock()
+
 	w.transactions = map[[32]byte]float64{}
+
 	for curBlock := range w.blockchain.Iterator() {
 		for _, tr := range curBlock.GetTransactions() {
-
 			owner, money, used := w.CheckTransactionOwner(tr)
 			if owner == false {
 				continue

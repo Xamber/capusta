@@ -7,7 +7,7 @@ import (
 
 // Block contain information about Block
 type Block struct {
-	index        int
+	index        int64
 	timestamp    int64
 	data         []Transaction
 	proof        int64
@@ -17,28 +17,6 @@ type Block struct {
 
 func (b *Block) GetTransactions() []Transaction {
 	return b.data
-}
-
-func (b *Block) DataToBinary() []any {
-
-	data := []any{
-		b.previousHash,
-		b.timestamp,
-		b.transactionToBinary(),
-		b.proof,
-	}
-
-	return data
-}
-
-func (b *Block) transactionToBinary() []byte {
-	blob := [][]byte{}
-
-	for _, t := range b.data {
-		blob = append(blob, t.makeBLOB())
-	}
-
-	return bytes.Join(blob, []byte{})
 }
 
 // Block.validate check Hash of Block

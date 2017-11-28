@@ -62,7 +62,7 @@ func (chain *blockchain) MineBlock(miner string) {
 	chain.transactions = append(chain.transactions, NewReward(miner))
 
 	var block = Block{
-		index:        chain.getLenght(),
+		index:        int64(chain.getLenght()),
 		timestamp:    time.Now().UnixNano(),
 		data:         chain.transactions,
 		previousHash: chain.getLastBlock().hash,

@@ -60,13 +60,13 @@ func (w *Wallet) TransferMoney(to *Wallet, amount float64) (string, error) {
 
 func (w *Wallet) CheckTransactionOwner(t Transaction) (bool, float64, bool) {
 	var owner bool = false
-	var haveOutput float64 = 0
+	var money float64 = 0
 	var haveInput bool = false
 
 	for _, out := range t.outputs {
 		if out.to == w.owner {
 			owner = true
-			haveOutput += out.value
+			money += out.value
 		}
 	}
 
@@ -76,7 +76,7 @@ func (w *Wallet) CheckTransactionOwner(t Transaction) (bool, float64, bool) {
 			haveInput = true
 		}
 	}
-	return owner, haveOutput, haveInput
+	return owner, money, haveInput
 }
 
 func (w *Wallet) RefreshTransactions() {

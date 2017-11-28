@@ -85,21 +85,18 @@ func (w *Wallet) RefreshTransactions() {
 	w.transactions = map[[32]byte]float64{}
 	for curBlock := range w.blockchain.Iterator() {
 		for _, tr := range curBlock.GetTransactions() {
-			w.handleTransaction(tr)
+
+			owner, money, used := w.CheckTransactionOwner(tr)
+			if owner == false {
+				continue
+			}
+
+			if money > 0 {
+				w.transactions[tr.hash] = w.transactions[tr.hash] + money
+			}
+			if _, ok := w.transactions[tr.hash]; ok && used {
+				delete(w.transactions, tr.hash)
+			}
 		}
-	}
-}
-
-func (w *Wallet) handleTransaction(t Transaction) {
-	owner, money, used := w.CheckTransactionOwner(t)
-	if owner == false {
-		return
-	}
-
-	if money > 0 {
-		w.transactions[t.hash] = w.transactions[t.hash] + money
-	}
-	if _, ok := w.transactions[t.hash]; ok && used {
-		delete(w.transactions, t.hash)
 	}
 }
